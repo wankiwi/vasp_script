@@ -3,8 +3,7 @@ Some scripts to perform post-processing or generate input files on VASP calculat
 ***
 ### neb_generate.py  
 ```
-usage: neb_generate.py [-h] [-v] [-i INITIAL_STATE_CARFILE] [-f FINAL_STATE_CARFILE] [-m {line,idpp}]
-                       [-n NUMBER_OF_IMAGES]
+usage: neb_generate.py [-h] [-v] [-i INITIAL_STATE_CARFILE] [-f FINAL_STATE_CARFILE] [-m {line,idpp}] [-n NUMBER_OF_IMAGES]
 ```
 Takes initial and final CARfiles, and linear or idpp method interpolationthe specified number of images between them.
 The interpolated files are written to thedirectories 00 to NI+1, where NI is the number of specified images.
