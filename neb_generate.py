@@ -16,9 +16,9 @@ def linear_interpolation():
     for i in range(len(images)):
         if not os.path.isdir(f'{i:02}'):
             os.mkdir(f'{i:02}')
-        images[i].write(f'{i:02}\POSCAR')
-        images[i].write(f'{i:02}\POSCAR.xyz')
-        with open(f'{i:02}\POSCAR.xyz') as xyz_file:
+        images[i].write(f'{i:02}/POSCAR',vasp5=True,direct=True)
+        images[i].write(f'{i:02}/POSCAR.xyz')
+        with open(f'{i:02}/POSCAR.xyz') as xyz_file:
             line = xyz_file.readline()
             while line:
                 movie.append(line)
@@ -38,9 +38,9 @@ def idpp_interpolation():
     for i in range(len(images)):
         if not os.path.isdir(f'{i:02}'):
             os.mkdir(f'{i:02}')
-        images[i].write(f'{i:02}\POSCAR')
-        images[i].write(f'{i:02}\POSCAR.xyz')
-        with open(f'{i:02}\POSCAR.xyz') as xyz_file:
+        images[i].write(f'{i:02}/POSCAR',vasp5=True,direct=True)
+        images[i].write(f'{i:02}/POSCAR.xyz')
+        with open(f'{i:02}/POSCAR.xyz') as xyz_file:
             line = xyz_file.readline()
             while line:
                 movie.append(line)
@@ -51,7 +51,7 @@ def idpp_interpolation():
         
 
 def get_version():
-    return '1.0 (2020.12.8, wankaiweii@gamil.com)'
+    return '1.1 (2020.12.14, wankaiweii@gamil.com)'
 
 if __name__ == '__main__':
     import argparse
@@ -60,10 +60,10 @@ if __name__ == '__main__':
                                      'directories 00 to NI+1, where NI is the number of specified images.')
     
     parser.add_argument('-v', '--version', action='version', version=get_version(),help='Display version')
-    parser.add_argument('-i','--initial_state_carfile', type=str, action='store', default=r'is\CONTCAR',
-                        help='The storage location of initial state CARfile. [Optional] [default="is\CONTCAR"]')   
-    parser.add_argument('-f','--final_state_carfile', type=str, action='store', default=r'fs\CONTCAR',
-                        help='The storage location of final state CARfile. [Optional] [default="fs\CONTCAR"]')
+    parser.add_argument('-i','--initial_state_carfile', type=str, action='store', default=r'is/CONTCAR',
+                        help='The storage location of initial state CARfile. [Optional] [default="is/CONTCAR"]')   
+    parser.add_argument('-f','--final_state_carfile', type=str, action='store', default=r'fs/CONTCAR',
+                        help='The storage location of final state CARfile. [Optional] [default="fs/CONTCAR"]')
     parser.add_argument('-m','--interpolation_method', type=str, action='store',choices={'idpp','line'}, default='idpp',
                         help='The method of interpolation. [Optional] [default="idpp"]')
     parser.add_argument('-n','--number_of_images', type=int, action='store', default=5,
