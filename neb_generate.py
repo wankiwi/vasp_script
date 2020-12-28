@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+__author__ = 'wankw (wankaiweii@gmail.com)' 
+
 from ase.neb import NEB
 from ase.io import read
 from ase.io import write
@@ -51,7 +53,7 @@ def idpp_interpolation():
         
 
 def get_version():
-    return '1.1 (2020.12.14, wankaiweii@gamil.com)'
+    return '1.1 (2020.12.14, wankaiweii@gmail.com)'
 
 if __name__ == '__main__':
     import argparse
