@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+__author__ = 'wankw (wankaiweii@gmail.com)' 
+
 import originpro as op
 import pandas as pd
 import os
