@@ -81,10 +81,6 @@ selective_tag_array = np.array(selective_tag_array,dtype=int)
 n_fix = len([i for i in selective_tag_array if all(i == np.array([0,0,0]))])
 n = np.shape(selective_tag_array)[0] - n_fix
 
-#The number of atoms fixed in x y z direction
-n_fix = len([i for i in selective_tag_array if all(i == np.array([0,0,0]))])
-n = np.shape(selective_tag_array)[0] - n_fix
-
 #force list
 force_list = []
 selective_force_list = []
