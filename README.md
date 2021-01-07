@@ -5,8 +5,7 @@ Some scripts to perform post-processing or generate input files on VASP calculat
 ```
 usage: neb_generate.py [-h] [-v] [-i INITIAL_STATE_CARFILE] [-f FINAL_STATE_CARFILE] [-m {line,idpp}] [-n NUMBER_OF_IMAGES]
 ```
-Takes initial and final CARfiles, and interpolate (linear or idpp method) the specified number of images between them.
-The interpolated files are written to thedirectories 00 to NI+1, where NI is the number of specified images.
+Takes initial and final CARfiles, generate the initial guess images between them by linear interpolation or image dependent pair potential (idpp) interpolation. The initial guess files are written to the directories 00 to NI+1, where NI is the number of specified images.
 
 optional arguments:  
   **-h, --help**            show this help message and exit  
