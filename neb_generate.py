@@ -57,9 +57,10 @@ def get_version():
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description='Takes initial and final CARfiles, and linear or idpp method interpolation' 
-                                     'the specified number of images between them. The interpolated files are written to the'
-                                     'directories 00 to NI+1, where NI is the number of specified images.')
+    parser = argparse.ArgumentParser(description='Takes initial and final CARfiles, generate the initial guess '
+                                                 'images between them by linear interpolation or image dependent '
+                                                 'pair potential (idpp) interpolation. The initial guess files are '
+                                                 'written to the directories 00 to NI+1, where NI is the number of specified images.')
     
     parser.add_argument('-v', '--version', action='version', version=get_version(),help='Display version')
     parser.add_argument('-i','--initial_state_carfile', type=str, action='store', default=r'is/CONTCAR',
