@@ -5,12 +5,16 @@ __author__ = 'wankw (wankaiweii@gmail.com)'
 from ase.neb import NEB
 from ase.io import read
 from ase.io import write
+from numpy.linalg import norm
 import os
 
 def check_move_far(initial,final):
     is_pos = initial.get_positions()
     fs_pos = final.get_positions()
     cell_vec = initial.get_cell_lengths_and_angles()[0:3]
+    dist = norm(list(map(norm, (is_pos - fs_pos))))
+    print (f'Distance between is&fs is {dist}!')
+    
     n = 0
     for i in abs(is_pos - fs_pos) >  0.5 * cell_vec:
         if i.any():
