@@ -1,12 +1,21 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-__author__ = 'wankw (wankaiweii@gmail.com)' 
+__author__ = 'wankw (wankaiweii@gamil.com)' 
 
 from ase.neb import NEB
 from ase.io import read
 from ase.io import write
 import os
+
+def check_move_far(initial,final):
+    is_pos = initial.get_positions()
+    fs_pos = final.get_positions()
+    cell_vec = initial.get_cell_lengths_and_angles()[0:3]
+    n = 0
+    for i in abs(is_pos - fs_pos) >  0.5 * cell_vec:
+        if i.any():
+            print (f'Movement of atom {n+1} is too far! Check it! is: {is_pos[n]} --> fs: {fs_pos[n]}')
+        n += 1
 
 def linear_interpolation():
     images = [initial.copy() for i in range(n_image+1)] + [final]
@@ -51,9 +60,8 @@ def idpp_interpolation():
     with open('movie_idpp.xyz','w') as movie_xyz:
         movie_xyz.writelines(movie)
         
-
 def get_version():
-    return '1.1 (2020.12.14, wankaiweii@gmail.com)'
+    return '1.0 (2020.12.8, wankaiweii@gamil.com)'
 
 if __name__ == '__main__':
     import argparse
@@ -79,10 +87,11 @@ if __name__ == '__main__':
     n_image = args.number_of_images
     interpolation_method = args.interpolation_method
     
+    check_move_far(initial,final)
+
     if interpolation_method == 'line':
         linear_interpolation()
     elif interpolation_method == 'idpp':
         idpp_interpolation()
         
     print (f'Generate {n_image} images between {args.initial_state_carfile} & {args.final_state_carfile} by {interpolation_method} interpolation!')
-
