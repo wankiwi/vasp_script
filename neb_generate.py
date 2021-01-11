@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-__author__ = 'wankw (wankaiweii@gamil.com)' 
+__author__ = 'wankw (wankaiweii@gmail.com)' 
 
 from ase.neb import NEB
 from ase.io import read
