@@ -61,7 +61,7 @@ def idpp_interpolation():
         movie_xyz.writelines(movie)
         
 def get_version():
-    return '1.0 (2020.12.8, wankaiweii@gamil.com)'
+    return '1.0 (2020.12.8, wankaiweii@gmail.com)'
 
 if __name__ == '__main__':
     import argparse
