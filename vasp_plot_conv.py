@@ -42,7 +42,7 @@ def mp_plot(x_data,y_data,x_label,y_label):
 
 
 def get_version():
-    return '1.4 (2021.1.3, wankaiweii@gmail.com)'
+    return '1.5 (2021.2.10, wankaiweii@gmail.com)'
 
 parser = argparse.ArgumentParser(description='Plot the convergence curve in VASP calculation.')
 
@@ -80,7 +80,7 @@ atominfo_list = atominfo_list.split()
 
 selective_list = []
 selec_tag = re.compile(r'[TF]')
-if 's' in poscar[7] or 'S' in poscar[7]:
+if poscar[7].split()[0][0] == ('s' or 'S'):
     for i in poscar[9:9+len(atominfo_list)]:
         selective_list.append(selec_tag.findall(i))
 else:
