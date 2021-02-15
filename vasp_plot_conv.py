@@ -80,7 +80,7 @@ atominfo_list = atominfo_list.split()
 
 selective_list = []
 selec_tag = re.compile(r'[TF]')
-if poscar[7].split()[0][0] == ('s' or 'S'):
+if poscar[7].split()[0][0] == 's' or poscar[7].split()[0][0] == 'S':
     for i in poscar[9:9+len(atominfo_list)]:
         selective_list.append(selec_tag.findall(i))
 else:
