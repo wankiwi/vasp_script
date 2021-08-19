@@ -31,12 +31,12 @@ def check_move_far(initial,final):
         print (f'{len(far_list)} {temp} moved more than half of cell length, fix it automatically?(y/n)')
         answer = input('')
     #is_scaled_pos_new = is_scaled_pos.copy()
-    if answer == 'y':
-        for i in far_list:
-            a = abs(is_scaled_pos[i] - fs_scaled_pos[i]) >  0.5
-            b = is_scaled_pos[i] > [0.5,0.5,0.5]
-            c = np.array([-1,-1,-1]) ** b * a
-            is_scaled_pos[i] = is_scaled_pos[i] + c
+        if answer == 'y':
+            for i in far_list:
+                a = abs(is_scaled_pos[i] - fs_scaled_pos[i]) >  0.5
+                b = is_scaled_pos[i] > [0.5,0.5,0.5]
+                c = np.array([-1,-1,-1]) ** b * a
+                is_scaled_pos[i] = is_scaled_pos[i] + c
             
     return is_scaled_pos
 
