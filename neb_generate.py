@@ -6,42 +6,41 @@ from ase.neb import NEB
 from ase.io import read
 from ase.io import write
 import numpy as np
-np.set_printoptions(suppress=True)
+from numpy.linalg import norm
 import os
 
 def check_move_far(initial,final):
-    is_pos = initial.get_positions()
-    fs_pos = final.get_positions()
-    cell_vec = initial.get_cell()
-    is_scaled_pos = is_pos @ np.linalg.inv(cell_vec)#get_scaled_positions输出没有负号
-    fs_scaled_pos = fs_pos @ np.linalg.inv(cell_vec)
-    dist = np.linalg.norm(list(map(np.linalg.norm, (is_pos - fs_pos))))
+    is_pos = initial.get_scaled_positions(wrap=False)
+    fs_pos = final.get_scaled_positions(wrap=False)
+    dist = norm(list(map(norm, (is_pos - fs_pos)@initial.get_cell()[:])))
     print (f'Distance between is&fs is {dist}!')
 
     n = 0
-    far_list = []
-    for i in abs(is_scaled_pos - fs_scaled_pos) >  0.5:
-        if i.any():
-            print (f'Atom no.{n+1} moved more than half of cell length! vector_diff: {abs(is_scaled_pos-fs_scaled_pos)[n]}')
-            far_list.append(n)
-        n += 1
-        
-    if far_list != []:
-        temp = 'atoms' if len(far_list)>1 else 'atom'
-        print (f'{len(far_list)} {temp} moved more than half of cell length, fix it automatically?(y/n)')
-        answer = input('')
-    #is_scaled_pos_new = is_scaled_pos.copy()
-        if answer == 'y':
-            for i in far_list:
-                a = abs(is_scaled_pos[i] - fs_scaled_pos[i]) >  0.5
-                b = is_scaled_pos[i] > [0.5,0.5,0.5]
-                c = np.array([-1,-1,-1]) ** b * a
-                is_scaled_pos[i] = is_scaled_pos[i] + c
-            
-    return is_scaled_pos
+    far_id_list = np.argwhere(abs(is_pos-fs_pos)>0.5)
 
-def linear_interpolation(ini,fin):
-    images = [ini.copy() for i in range(n_image+1)] + [fin]
+    for i in far_id_list:
+        print (f'Movement of atom {i[0]+1} is too far! Check it! is: {is_pos[i[0]]} --> fs: {fs_pos[i[0]]}')
+    return far_id_list
+
+def wrap_atoms_by_id(far_id_list, init_atoms, fin_atoms):
+    pos_is = init_atoms.get_scaled_positions(wrap=False)
+    pos_fs = fin_atoms.get_scaled_positions(wrap=False)
+    
+    for i in far_id_list:
+        if pos_is[i[0]][i[1]] > pos_fs[i[0]][i[1]]:
+            pos_fs[i[0]][i[1]] = pos_fs[i[0]][i[1]]+1
+        elif pos_is[i[0]][i[1]] < pos_fs[i[0]][i[1]]:
+            pos_is[i[0]][i[1]] = pos_is[i[0]][i[1]]+1
+
+    init_wrap_atoms = init_atoms.copy()
+    init_wrap_atoms.set_scaled_positions(pos_is)
+
+    fin_wrap_atoms = fin_atoms.copy()
+    fin_wrap_atoms.set_scaled_positions(pos_fs)
+    return init_wrap_atoms, fin_wrap_atoms
+
+def linear_interpolation():
+    images = [initial.copy() for i in range(n_image+1)] + [final]
     #linearly_interpolates
     neb = NEB(images)
     neb.interpolate()
@@ -51,7 +50,7 @@ def linear_interpolation(ini,fin):
         if not os.path.isdir(f'{i:02}'):
             os.mkdir(f'{i:02}')
         images[i].write(f'{i:02}/POSCAR',vasp5=True,direct=True)
-        images[i].write(f'{i:02}/POSCAR.xyz')
+        images[i].write(f'{i:02}/POSCAR.xyz', format='xyz')
         with open(f'{i:02}/POSCAR.xyz') as xyz_file:
             line = xyz_file.readline()
             while line:
@@ -62,8 +61,8 @@ def linear_interpolation(ini,fin):
         movie_xyz.writelines(movie)
 
 #Reference: S. Smidstrup, A. Pedersen, K. Stokbro and H. Jonsson, Improved initial guess for minimum energy path calculations, J. Chem. Phys. 140, 214106 (2014).
-def idpp_interpolation(ini,fin):
-    images = [ini.copy() for i in range(n_image+1)] + [fin]
+def idpp_interpolation():
+    images = [initial.copy() for i in range(n_image+1)] + [final]
     #idpp_interpolates
     neb = NEB(images)
     neb.interpolate('idpp')
@@ -73,7 +72,7 @@ def idpp_interpolation(ini,fin):
         if not os.path.isdir(f'{i:02}'):
             os.mkdir(f'{i:02}')
         images[i].write(f'{i:02}/POSCAR',vasp5=True,direct=True)
-        images[i].write(f'{i:02}/POSCAR.xyz')
+        images[i].write(f'{i:02}/POSCAR.xyz', format='xyz')
         with open(f'{i:02}/POSCAR.xyz') as xyz_file:
             line = xyz_file.readline()
             while line:
@@ -84,7 +83,7 @@ def idpp_interpolation(ini,fin):
         movie_xyz.writelines(movie)
         
 def get_version():
-    return '1.1 (2021.8.18, wankaiweii@gmail.com)'
+    return '1.0 (2020.12.8, wankaiweii@gmail.com)'
 
 if __name__ == '__main__':
     import argparse
@@ -102,20 +101,30 @@ if __name__ == '__main__':
                         help='The method of interpolation. [Optional] [default="idpp"]')
     parser.add_argument('-n','--number_of_images', type=int, action='store', default=5,
                         help='The number of interpolation. [Optional] [default=5]')
+    parser.add_argument('-w','--wrap_tag', type=bool, action='store', default=True,
+                        help='Wrap positions or not. [Optional] [default=True]')
+    
     
     args = parser.parse_args()
     
-    initial = read(rf'{args.initial_state_carfile}')
-    final = read(rf'{args.final_state_carfile}')
+    initial_ini = read(rf'{args.initial_state_carfile}')
+    final_ini = read(rf'{args.final_state_carfile}')
     n_image = args.number_of_images
     interpolation_method = args.interpolation_method
-    
-    initial.set_scaled_positions(check_move_far(initial,final))
-    
+    wrap_tag = args.wrap_tag
+   
+    far_id_list = check_move_far(initial_ini, final_ini)
+    if far_id_list.any() and wrap_tag:
+        initial, final = wrap_atoms_by_id(far_id_list, initial_ini, final_ini)
+        print ('\nAfter wrap!')
+        far_id_list = check_move_far(initial, final)
+    else:
+        initial = initial_ini
+        final = final_ini
+ 
     if interpolation_method == 'line':
-        linear_interpolation(initial,final)
+        linear_interpolation()
     elif interpolation_method == 'idpp':
-        idpp_interpolation(initial,final)
+        idpp_interpolation()
         
     print (f'Generate {n_image} images between {args.initial_state_carfile} & {args.final_state_carfile} by {interpolation_method} interpolation!')
-
