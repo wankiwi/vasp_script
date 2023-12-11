@@ -269,8 +269,6 @@ class PEDGenerator(object):
         legend.set_int('left', 0)
         legend.set_int('showframe',0)
         
-        self.gl_s.axis('y').title = 'test'
-        
         op.save(rf'{path}\{file_name}')
         op.exit()
 
